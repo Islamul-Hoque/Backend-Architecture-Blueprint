@@ -19,13 +19,13 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
     }
 
     // Single products "GET"
-    else if(method === "GET" && id !==null ){
-        const products = readProducts()
-        const product = products.find((p: IProducts)=>p.id === id )
+    // else if(method === "GET" && id !==null ){
+    //     const products = readProducts()
+    //     const product = products.find((p: IProducts)=>p.id === id )
 
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ message: "Single product retrieved successfully", data: product }));
-    }
+    //     res.writeHead(200, { "content-type": "application/json" });
+    //     res.end(JSON.stringify({ message: "Single product retrieved successfully", data: product }));
+    // }
 
     // // Single product "POST"
     // else if(method === "POST" && url === "/products" ){
