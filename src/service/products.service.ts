@@ -10,6 +10,6 @@ export const readProducts =()=>{
 }
 
 // insert->POST
-// export const insertProduct =(payload: any)=>{
-//     fs.writeFileSync(filePath, JSON.stringify(payload))
-// }
+export const insertProduct =(payload: any)=>{
+    fs.writeFileSync(filePath, JSON.stringify(payload))
+}
