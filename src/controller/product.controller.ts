@@ -2,8 +2,7 @@ import type { IncomingMessage, ServerResponse } from "http";
 import { insertProduct, readProducts } from "../service/products.service";
 import type { IProducts } from "../types/products.type";
 import { parseBody } from "../utility/parseBody";
-import { sendResponse } from "../utility/sendresponse";
-import { error } from "console";
+import { sendResponse } from "../utility/sendResponse";
 
 export const productController = async (req: IncomingMessage, res: ServerResponse) => {
 
@@ -34,7 +33,7 @@ export const productController = async (req: IncomingMessage, res: ServerRespons
             return sendResponse(res, 404, false, "Product not found!");
         }
 
-        return sendResponse(res, 200, true, "Product retrieved successfully", products);
+        return sendResponse(res, 200, true, "Product retrieved successfully", product);
         } catch (error) {
             return sendResponse(res, 500, false, "something went wrong", error);
         }
@@ -52,7 +51,7 @@ export const productController = async (req: IncomingMessage, res: ServerRespons
             }
             products.push(newProduct)
             insertProduct(products);
-            return sendResponse(res, 200, true, "Product retrieved successfully", newProduct);
+            return sendResponse(res, 200, true, "Product created successfully", newProduct);
         } catch (error) {
             return sendResponse(res, 500, false, "something went wrong", error);
         }
@@ -60,47 +59,51 @@ export const productController = async (req: IncomingMessage, res: ServerRespons
 
     // Single products "PUT"
     else if (method === "PUT" && id !== null) {
-        const body = await parseBody(req)
-        const products = readProducts()
+        try {
+            const body = await parseBody(req)
+            const products = readProducts()
 
-        // find product 
-        const index = products.findIndex((p: IProducts) => p.id === id)
+            // find product 
+            const index = products.findIndex((p: IProducts) => p.id === id)
 
-        // index Error handel
-        if (index < 0) {
-            res.writeHead(404, { "content-type": "application/json" });
-            res.end(JSON.stringify({ message: "Product not found!", data: null }));
+            // index Error handel
+            if (index < 0) {
+                return sendResponse(res, 404, false, "Product not found!", null);
+            }
+
+            // Update product details
+            products[index] = { id: products[index].id, ...body }
+
+            // update product Array in database
+            insertProduct(products);
+            return sendResponse(res, 200, true, "Product updated successfully", products[index]);
+        } catch (error) {
+            return sendResponse(res, 500, false, "something went wrong", error);
         }
-
-        // Update product details
-        products[index] = { id: products[index].id, ...body }
-
-        // update product Array in database
-        insertProduct(products);
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ message: "Product updated successfully", data: products[index] }));
     }
 
     // Single products "DELETE"
     else if (method === "DELETE" && id !== null) {
-        const products = readProducts()
+        try {
+            const products = readProducts()
 
-        // find product 
-        const index = products.findIndex((p: IProducts) => p.id === id)
+            // find product 
+            const index = products.findIndex((p: IProducts) => p.id === id)
 
-        // index Error handel
-        if (index < 0) {
-            res.writeHead(404, { "content-type": "application/json" });
-            res.end(JSON.stringify({ message: "Product not found!", data: null }));
+            // index Error handel
+            if (index < 0) {
+                return sendResponse(res, 404, false, "Product not found!", null);
+            }
+
+            // DELETE product from array
+            products.splice(index, 1);
+
+            // Delete product Array in database
+            insertProduct(products);
+            return sendResponse(res, 200, true, "Product deleted successfully", null);
+        } catch (error) {
+            return sendResponse(res, 500, false, "something went wrong", error);
         }
-
-        // DELETE product from array
-        products.splice(index, 1);
-
-        // Delete product Array in database
-        insertProduct(products);
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ message: "Product deleted successfully", data: null }));
     }
 }
 
