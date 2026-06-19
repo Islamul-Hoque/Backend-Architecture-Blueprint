@@ -23,6 +23,12 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         const products = readProducts()
         const product = products.find((p: IProducts)=>p.id === id )
 
+        // Id not found
+        if(!product){
+            res.writeHead(404, { "content-type": "application/json" });
+            res.end(JSON.stringify({ message: "Product not found!", data: null }));
+        }
+
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ message: "Single product retrieved successfully", data: product }));
     }
@@ -38,7 +44,6 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         }
         products.push(newProduct)
         insertProduct(products);
-        // console.log(products);
 
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ message: "Single product created successfully", data: newProduct }));
@@ -52,6 +57,12 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         // find product 
         const index = products.findIndex((p: IProducts)=>p.id === id)
 
+        // index Error handel
+        if(index < 0) {
+            res.writeHead(404, { "content-type": "application/json" });
+            res.end(JSON.stringify({ message: "Product not found!", data: null }));
+        }
+
         // Update product details
         products[index] = {id: products[index].id, ...body}
 
@@ -59,12 +70,6 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         insertProduct(products);
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ message: "Product updated successfully", data: products[index] }));
-
-        // index Error handel
-        if(index < 0) {
-            res.writeHead(404, { "content-type": "application/json" });
-            res.end(JSON.stringify({ message: "Product not found!", data: null }));
-        }
     }
 
     // Single products "DELETE"
@@ -74,6 +79,12 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         // find product 
         const index = products.findIndex((p: IProducts)=>p.id === id)
 
+        // index Error handel
+        if(index < 0) {
+            res.writeHead(404, { "content-type": "application/json" });
+            res.end(JSON.stringify({ message: "Product not found!", data: null }));
+        }
+
         // DELETE product from array
         products.splice(index, 1);
 
@@ -81,12 +92,6 @@ export const productController =async (req: IncomingMessage, res: ServerResponse
         insertProduct(products);
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ message: "Product deleted successfully", data: null }));
-
-        // index Error handel
-        if(index < 0) {
-            res.writeHead(404, { "content-type": "application/json" });
-            res.end(JSON.stringify({ message: "Product not found!", data: null }));
-        }
     }
 }
 
