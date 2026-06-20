@@ -1,5 +1,5 @@
 {
-  "name": "backend-architecture-blueprint",
+  "name": "Nodejs-Architecture-Blueprint",
   "version": "1.0.0",
   "description": "npm init -y",
   "main": "index.js",
@@ -15,6 +15,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "tsx": "^4.22.4"
   }
 }
